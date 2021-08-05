@@ -4,7 +4,7 @@ const helmet = require("helmet");
 const jwt = require("express-jwt");
 const jwksRsa = require("jwks-rsa");
 const { join } = require("path");
-const authConfig = require("./auth_config.json");
+const authConfig = require("./public/auth_config.json");
 
 const app = express();
 
@@ -35,12 +35,8 @@ app.get("/api/external", checkJwt, (req, res) => {
   });
 });
 
-app.get("/auth_config.json", (req, res) => {
-  res.sendFile(join(__dirname, "auth_config.json"));
-});
-
 app.get("/*", (req, res) => {
-  res.sendFile(join(__dirname, "index.html"));
+  res.sendFile(join(__dirname, "public/index.html"));
 });
 
 app.use(function(err, req, res, next) {
