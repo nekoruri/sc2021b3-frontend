@@ -2,7 +2,7 @@
 <html class="h-100">
   <head>
     <meta charset="UTF-8" />
-    <title>seccamp-B3 sample app</title>
+    <title>seccamp B3 sample app</title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -154,10 +154,10 @@
             </div>
           </div>
         </nav>
-      </div>
+      </div><!-- nav-container-->
 
       <div id="main-content" class="container mt-5 flex-grow-1">
-        <div id="content-home" class="page hidden">
+        <div class="page hidden" id="content-home">
           <div class="hero">
             <img
               class="mb-3 app-logo"
@@ -171,6 +171,16 @@
               基本的なログイン機能を備えたユーザー投稿型アプリケーションのサンプルです。
               まずはログインして、<a href="/profile" class="route-link">自分の投稿</a>から新しいメッセージを投稿してみよう。
             </p>
+
+            <p>このアプリには以下の機能があります。</p>
+            <ul>
+              <li>Auth0に登録したユーザでログイン・ログアウトできる。</li>
+              <li>ログイン中のユーザが、<ul>
+                <li>投稿できる。</li>
+                <li>自分の投稿を一覧表示できる。</li>
+                <li>ユーザ名を指定してそのユーザの投稿を一覧表示できる。</li>
+              </ul></li>
+            </ul>
           </div>
 
           <div class="timeline auth-visible">
@@ -251,6 +261,7 @@
         </div>
 
         <div class="page hidden" id="content-external-api">
+          <!-- Auth0サンプルの残滓 -->
         </div>
       </div>
 
