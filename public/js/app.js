@@ -107,6 +107,12 @@ const callApi = async () => {
       newRow.querySelector('.post-username').textContent = post.username;
       newRow.querySelector('.post-date').textContent = new Date(post.created_at * 1000).toLocaleString('ja-jp');
       newRow.querySelector('.post-body').textContent = post.body;
+      if (post.imageUrl) {
+        newRow.querySelector('.post-body').querySelector('a').setAttribute('href', post.imageUrl);
+        newRow.querySelector('.post-body').querySelector('img').setAttribute('src', post.imageUrl);
+      } else {
+        newRow.querySelector('.post-body').removeChild(newRow.querySelector('.post-body').querySelector('a'));
+      }
       resultTbody.appendChild(newRow);
     });
 
@@ -152,7 +158,13 @@ const callApiWithUser = async () => {
       const newRow = templateRow.cloneNode(true);
       newRow.querySelector('.post-username').textContent = post.username;
       newRow.querySelector('.post-date').textContent = new Date(post.created_at * 1000).toLocaleString('ja-jp');
-      newRow.querySelector('.post-body').textContent = post.body;
+      newRow.querySelector('.post-body .text').textContent = post.body;
+      if (post.imageUrl) {
+        newRow.querySelector('.post-body').querySelector('a').setAttribute('href', post.imageUrl);
+        newRow.querySelector('.post-body').querySelector('img').setAttribute('src', post.imageUrl);
+      } else {
+        newRow.querySelector('.post-body').removeChild(newRow.querySelector('.post-body').querySelector('a'));
+      }
       resultTbody.appendChild(newRow);
     });
 
