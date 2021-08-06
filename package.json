@@ -1,6 +1,7 @@
 {
   "name": "03-calling-an-api",
   "version": "1.0.0",
+  "private": true,
   "description": "The purpose of this article is to demonstrate how to call a backend API using an access token",
   "main": "server.js",
   "dependencies": {
