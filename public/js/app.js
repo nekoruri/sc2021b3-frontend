@@ -131,6 +131,10 @@ const callApiWithUser = async () => {
     const token = await auth0.getTokenSilently();
 
     const username = document.querySelector('#username').value;
+    if (!username) {
+      return;
+    }
+
     const url = apiEndpoint + '?user=' + username;
     const response = await fetch(url, {
       headers: {Authorization: `Bearer ${token}`}
