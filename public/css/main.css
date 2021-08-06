@@ -18,3 +18,21 @@ label {
 .result-block-container .result-block.show {
   opacity: 1;
 }
+
+.logo {
+  background-image: url("/images/logo.png") !important
+}
+
+.hero {
+  max-width: 1000px !important;
+  margin: 0 !important;
+}
+
+.hero p.lead {
+  margin-bottom: 1rem !important
+}
+
+.timeline {
+  max-width: 1000px;
+  margin: 0 !important;
+}

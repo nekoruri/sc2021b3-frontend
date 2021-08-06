@@ -2,7 +2,7 @@
 <html class="h-100">
   <head>
     <meta charset="UTF-8" />
-    <title>SPA SDK Sample</title>
+    <title>seccamp-B3 sample app</title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -56,9 +56,9 @@
                 </li>
                 <li class="nav-item">
                   <a
-                    href="/external-api"
+                    href="/profile"
                     class="nav-link route-link hidden auth-visible"
-                    >External API</a
+                    >自分の投稿</a
                   >
                 </li>
               </ul>
@@ -158,88 +158,38 @@
 
       <div id="main-content" class="container mt-5 flex-grow-1">
         <div id="content-home" class="page">
-          <div class="text-center hero">
+          <div class="hero">
             <img
               class="mb-3 app-logo"
               src="/images/logo.png"
               alt="JavaScript logo"
               width="75"
             />
-            <h1 class="mb-4">JavaScript Sample Project</h1>
+            <h1 class="mb-4">B3 サンプルアプリ</h1>
 
             <p class="lead">
-              This is a sample application that demonstrates an authentication
-              flow for an SPA, using plain JavaScript
+              基本的なログイン機能を備えたユーザー投稿型アプリケーションのサンプルです。
             </p>
           </div>
 
-          <div class="next-steps">
-            <h2 class="my-5 text-center">What can I do next?</h2>
+          <div class="timeline auth-visible">
+            <!-- ユーザー指定フォーム -->
+            <form class="form-inline" id="getForm">
+              <p class="form-group mb-1 auth-visible">
+                <label for="usrename">Username</label>
+                <input type="text" size="20" id="username" name="username" class="form-control"></input>
+                <a href="#" class="btn btn-primary" id="call-user-api">取得</a>
+              </p>
+            </form>
 
-            <div class="row">
-              <div class="col-md-5 mb-4">
-                <h6 class="mb-3">
-                  <a href="https://auth0.com/docs/connections">
-                    <i class="fas fa-link"></i> Configure other identity
-                    providers
-                  </a>
-                </h6>
-                <p>
-                  Auth0 supports social providers as Facebook, Twitter,
-                  Instagram and 100+, Enterprise providers as Microsoft Office
-                  365, Google Apps, Azure, and more. You can also use any OAuth2
-                  Authorization Server.
-                </p>
-              </div>
+            <div class="alert alert-warning hidden" role="alert" id="user-result-alert"></div>
 
-              <div class="col-md"></div>
-
-              <div class="col-md-5 mb-4">
-                <h6 class="mb-3">
-                  <a href="https://auth0.com/docs/multifactor-authentication">
-                    <i class="fas fa-link"></i> Enable Multifactor
-                    Authentication
-                  </a>
-                </h6>
-                <p>
-                  Add an extra layer of security by enabling Multi-factor
-                  Authentication, requiring your users to provide more than one
-                  piece of identifying information. Push notifications,
-                  authenticator apps, SMS, and DUO Security are supported.
-                </p>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-5 mb-4">
-                <h6 class="mb-3">
-                  <a href="https://auth0.com/docs/anomaly-detection">
-                    <i class="fas fa-link"></i> Anomaly Detection
-                  </a>
-                </h6>
-                <p>
-                  Auth0 can detect anomalies and stop malicious attempts to
-                  access your application. Anomaly detection can alert you and
-                  your users of suspicious activity, as well as block further
-                  login attempts.
-                </p>
-              </div>
-
-              <div class="col-md"></div>
-
-              <div class="col-md-5 mb-4">
-                <h6 class="mb-3">
-                  <a href="https://auth0.com/docs/rules">
-                    <i class="fas fa-link"></i> Learn About Rules
-                  </a>
-                </h6>
-                <p>
-                  Rules are JavaScript functions that execute when a user
-                  authenticates to your application. They run once the
-                  authentication process is complete, and you can use them to
-                  customize and extend Auth0's capabilities.
-                </p>
-              </div>
+            <!-- 指定したユーザーの新着投稿一覧 -->
+            <div class="reset-on-nav mb-3 w-100" id="user-result">
+              <table id="user-posts" border="border" class="w-100 hidden">
+                <thead><tr><th>投稿者</th><th>投稿時刻</th><th>本文</th></tr></thead>
+                <tbody></tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -258,45 +208,60 @@
                 <p class="lead text-muted user-email"></p>
               </div>
             </div>
+          </div>
 
+          <div class="container w-100">
+            <h2>自分の投稿</h2>
+            <p>
+              自分の投稿の一覧を新しい順に表示します。
+            </p>
+
+            <p class="mb-1">
+              <a href="#" class="btn btn-primary mt-5" id="call-api">取得</a>
+            </p>
+
+            <div class="alert alert-warning hidden" role="alert" id="result-alert"></div>
+
+            <div class="reset-on-nav w-100 mb-5 " id="result">
+              <table id="posts" border="border" class="w-100 hidden">
+                <thead><tr><th>投稿者</th><th>投稿時刻</th><th>本文</th></tr></thead>
+                <tbody></tbody>
+              </table>
+
+            <h2 class="mt-5">投稿する</h2>
+
+            <form class="form-inline" id="postForm">
+              <p class="form-group mb-1 auth-visible">
+                <input type="text" size="80" id="body" name="body" class="form-control" placeholder="本文"></input>
+                <input type="file" id="image" name="image" class="form-control"></input>
+                <a href="#" class="btn btn-primary" id="call-post-api">投稿</a>
+              </p>
+            </form>
+
+            <h2 class="mt-5">userinfo APIの結果(確認用)</h2>
             <div class="row">
               <pre class="rounded">
                 <code id="profile-data" class="json"></code></pre>
             </div>
           </div>
+
         </div>
 
         <div class="page" id="content-external-api">
-          <h1>External API</h1>
-          <p>
-            Ping an external API by clicking the button below. This will call
-            the external API using an access token, and the API will validate it
-            using the API's audience value.
-          </p>
-
-          <p class="mb-5">
-            <a href="#" class="btn btn-primary mt-5" id="call-api">Ping API</a>
-          </p>
-
-          <div class="result-block-container">
-            <div class="result-block reset-on-nav">
-              <h6 class="muted">Result</h6>
-              <pre>
-                <code class="js rounded" id="api-call-result">JSON.stringify(apiMessage, null, 2)</code>
-              </pre>
-            </div>
-          </div>
         </div>
       </div>
 
       <footer class="bg-light text-center p-5">
         <div class="logo"></div>
         <p>
-          Sample project provided by
-          <a href="https://auth0.com">Auth0</a>
+          Security Camp 2021
         </p>
       </footer>
     </div>
+
+    <table class="hidden">
+      <tr id="post-template-row"><td class="post-username"></td><td class="post-date"></td><td class="post-body"></td></tr>
+    </table>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>

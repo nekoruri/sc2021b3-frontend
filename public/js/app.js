@@ -1,5 +1,6 @@
 // The Auth0 client, initialized in configureClient()
 let auth0 = null;
+let apiEndpoint = "https://dvhrde83ui.execute-api.ap-northeast-1.amazonaws.com/";
 
 /**
  * Starts the authentication flow
@@ -70,27 +71,119 @@ const requireAuth = async (fn, targetUrl) => {
   return login(targetUrl);
 };
 
+// ここまではAuth0のデモアプリのまま
+
 /**
- * Calls the API endpoint with an authorization token
+ * ログイン中ユーザの投稿一覧を表示
  */
 const callApi = async () => {
   try {
     const token = await auth0.getTokenSilently();
 
-    const response = await fetch("/api/external", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    const response = await fetch(apiEndpoint, {
+      headers: {Authorization: `Bearer ${token}`}
     });
 
     const responseData = await response.json();
-    const responseElement = document.getElementById("api-call-result");
+    const posts = responseData.posts;
 
-    responseElement.innerText = JSON.stringify(responseData, {}, 2);
+    const templateRow = document.querySelector('#post-template-row');
+    const resultTbody = document.querySelector('#posts tbody');
 
-    document.querySelectorAll("pre code").forEach(hljs.highlightBlock);
+    while (resultTbody.firstChild) {
+      resultTbody.removeChild(resultTbody.firstChild);
+    }
 
-    eachElement(".result-block", (c) => c.classList.add("show"));
+    if (posts.length === 0) {
+      // 投稿が見つからない
+      eachElement("#posts", (c) => c.classList.add("hidden"));
+      eachElement("#result-alert", (c) => c.classList.remove("hidden"));
+      document.querySelector('#result-alert').textContent = "投稿が見つかりません。";
+      return;
+    }
+
+    posts.forEach((post) => {
+      const newRow = templateRow.cloneNode(true);
+      newRow.querySelector('.post-username').textContent = post.username;
+      newRow.querySelector('.post-date').textContent = new Date(post.created_at * 1000).toLocaleString('ja-jp');
+      newRow.querySelector('.post-body').textContent = post.body;
+      resultTbody.appendChild(newRow);
+    });
+
+    eachElement("#result-alert", (c) => c.classList.add("hidden"));
+    eachElement("#posts", (c) => c.classList.remove("hidden"));
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+/**
+ * 指定したユーザの投稿一覧を表示
+ */
+const callApiWithUser = async () => {
+  try {
+    const token = await auth0.getTokenSilently();
+
+    const username = document.querySelector('#username').value;
+    const url = apiEndpoint + '?user=' + username;
+    const response = await fetch(url, {
+      headers: {Authorization: `Bearer ${token}`}
+    });
+
+    const responseData = await response.json();
+    const posts = responseData.posts;
+
+    const templateRow = document.querySelector('#post-template-row');
+    const resultTbody = document.querySelector('#user-posts tbody');
+
+    while (resultTbody.firstChild) {
+      resultTbody.removeChild(resultTbody.firstChild);
+    }
+
+    if (posts.length === 0) {
+      // 投稿が見つからない
+      eachElement("#user-posts", (c) => c.classList.add("hidden"));
+      document.querySelector('#user-result-alert').textContent = "投稿が見つかりません。";
+      eachElement("#user-result-alert", (c) => c.classList.remove("hidden"));
+      return;
+    }
+
+    posts.forEach((post) => {
+      const newRow = templateRow.cloneNode(true);
+      newRow.querySelector('.post-username').textContent = post.username;
+      newRow.querySelector('.post-date').textContent = new Date(post.created_at * 1000).toLocaleString('ja-jp');
+      newRow.querySelector('.post-body').textContent = post.body;
+      resultTbody.appendChild(newRow);
+    });
+
+    eachElement("#user-result-alert", (c) => c.classList.add("hidden"));
+    eachElement("#user-posts", (c) => c.classList.remove("hidden"));
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+const callPostApi = async () => {
+  try {
+    const token = await auth0.getTokenSilently();
+
+    const body = document.querySelector('#body').value;
+
+    const formData = new FormData();
+    formData.append('body', body);
+    formData.append('image', document.querySelector('#image').files[0]);
+    const options = {
+      method: 'post',
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    };
+    // delete options.headers['Content-Type'];
+    const response = await fetch(apiEndpoint, options);
+
+    document.querySelector('#body').value = ''; // フォームをクリア
+    await callApi(); // 自分の投稿を再取得
   } catch (e) {
     console.error(e);
   }
@@ -120,6 +213,22 @@ window.onload = async () => {
     } else if (e.target.getAttribute("id") === "call-api") {
       e.preventDefault();
       callApi();
+    } else if (e.target.getAttribute("id") === "call-user-api") {
+      e.preventDefault();
+      callApiWithUser();
+    } else if (e.target.getAttribute("id") === "call-post-api") {
+      e.preventDefault();
+      callPostApi();
+    }
+  });
+
+  bodyElement.addEventListener("submit", (e) => {
+    if (e.target.getAttribute("id") === "postForm") {
+      e.preventDefault();
+      callPostApi();
+    } else if (e.target.getAttribute("id") === "getForm") {
+      e.preventDefault();
+      callApiWithUser();
     }
   });
 
